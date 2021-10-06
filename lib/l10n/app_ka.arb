@@ -1,0 +1,20 @@
+{
+  "language": "ენა",
+  "georgian": "ქართული",
+  "english": "english",
+  "russian": "русский",
+  "german": "deutsche",
+  "title": "დასაქმება",
+  "login": "შესვლა",
+  "register": "რეგისტრაცია",
+  "get_code": "კოდის მიღება",
+  "phone": "ტელეფონი",
+  "code": "კოდი",
+  "terms_and_conditions": "წესები და პირობები",
+  "terms_and_conditions_warning": "დარეგისტრირებით, თქვენ ეთანხმებით ჩვენს პირობებს\n",
+  "terms_and_conditions_file": "terms_and_conditions_ge.md",
+  "okay": "გასაგებია",
+  "save": "შენახვა",
+  "about_us": "ჩვენს შესახებ",
+  "contact": "კონტაქტი"
+}

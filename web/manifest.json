@@ -1,6 +1,6 @@
 {
-    "name": "jobs_and_services_frontend",
-    "short_name": "jobs_and_services_frontend",
+    "name": "jobs_and_services",
+    "short_name": "jobs_and_services",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

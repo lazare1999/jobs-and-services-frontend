@@ -1,0 +1,20 @@
+{
+    "language": "language",
+    "georgian": "ქართული",
+    "english": "english",
+    "russian": "русский",
+    "german": "deutsche",
+    "title": "jobs",
+    "login": "login",
+    "register": "register",
+    "get_code": "get code",
+    "phone": "phone",
+    "code": "code",
+    "terms_and_conditions": "terms and conditions",
+    "terms_and_conditions_warning": "by registering, you agree to our terms\n",
+    "terms_and_conditions_file": "terms_and_conditions_en.md",
+    "okay": "okay",
+    "save": "save",
+    "about_us": "about us",
+    "contact": "contact"
+}

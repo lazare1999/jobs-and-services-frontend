@@ -1,0 +1,20 @@
+{
+  "language": "язык",
+  "georgian": "ქართული",
+  "english": "english",
+  "russian": "русский",
+  "german": "deutsche",
+  "title": "დასაქმება",
+  "login": "авторизоваться",
+  "register": "регистр",
+  "get_code": "получить код",
+  "phone": "телефон",
+  "code": "код",
+  "terms_and_conditions": "условия и положения",
+  "terms_and_conditions_warning": "регистрируясь, вы соглашаетесь с нашими условиями\n",
+  "terms_and_conditions_file": "terms_and_conditions_en.md",
+  "okay": "хорошо",
+  "save": "сохранить",
+  "about_us": "о нас",
+  "contact": "контакт"
+}
