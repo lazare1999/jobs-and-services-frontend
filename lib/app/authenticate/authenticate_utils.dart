@@ -4,17 +4,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:jobs_and_services/app/authenticate/authentication_response.dart';
+import 'package:jobs_and_services/app/authenticate/models/authentication_response.dart';
 import 'package:jobs_and_services/app/sqflite/services/profile_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../globals.dart';
-import '../main.dart';
+import '../../globals.dart';
+import '../../main.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'lazo_utils.dart';
+import '../../utils/lazo_utils.dart';
 
 
 AuthenticationResponse auth = AuthenticationResponse();
