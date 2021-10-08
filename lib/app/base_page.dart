@@ -1,10 +1,15 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:jobs_and_services/app/authenticate/login/login_page.dart';
 import 'package:jobs_and_services/app/commons/animation_controller_class.dart';
 import 'package:jobs_and_services/app/commons/language_change_list_view.dart';
+import 'package:jobs_and_services/globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:jobs_and_services/utils/lazo_utils.dart';
+
+import 'package:http/http.dart' as http;
 
 import '../main.dart';
 
@@ -51,7 +56,7 @@ class _BasePage extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     final List<Tab> myTabs = <Tab>[
-      Tab(text: AppLocalizations.of(context)!.about_us),
+      Tab(text: AppLocalizations.of(context)!.about_us,),
       Tab(text: AppLocalizations.of(context)!.contact),
     ];
 
@@ -78,20 +83,32 @@ class _BasePage extends State<BasePage> {
                   ),
                 ),
                 body: TabBarView(
-                  children: myTabs.map((Tab tab) {
-                    final String label = tab.text!.toLowerCase();
-                    return Center(
-                      child: Text(
-                        label,
-                        style: const TextStyle(fontSize: 36),
-                      ),
-                    );
-                  }).toList(),
+                  children: [
+                    OutlinedButton(
+                      child: const Text("ping"),
+                      onPressed: () async {
+
+                        try {
+                          final res = await http.post(
+                            Uri.parse(commonUrl + 'ping'),
+                          );
+
+                          if(res.statusCode ==200) {
+
+                            showAlertDialog(context, "pong", "");
+                          }
+                        } catch (e) {
+                          showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
+                        }
+                      }, //exit the app
+                    ),
+                    const Text("aaaaaaa")
+                  ]
                 ),
                 floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
                 floatingActionButton: Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -109,10 +126,11 @@ class _BasePage extends State<BasePage> {
                       ),
                       FloatingActionButton(
                         child: const Icon(Icons.login_outlined),
-                        onPressed: () async {
-
-                          //  TODO : login გვერდი
-
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                          );
                         },
                       ),
                     ],
