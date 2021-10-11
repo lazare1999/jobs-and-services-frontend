@@ -143,6 +143,12 @@ Future<DateTime?> selectDate(BuildContext context, helpText) async {
   return DateTime(date.year, date.month, date.day, time!.hour, time.minute);
 }
 
+bool validatePassword(String value) {
+  String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+  RegExp regExp = RegExp(pattern);
+  return regExp.hasMatch(value);
+}
+
 
 //TODO : ნოტიფიკაცია
 // Future<void> showNotification() async {
