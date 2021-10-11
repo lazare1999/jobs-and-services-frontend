@@ -27,7 +27,7 @@
   "enter_the_correct_data": "შეიყვანეთ კორექტული მონაცემები",
   "temporary_code_empty": "მიუთითეთ დროებითი კოდი",
   "phone_number_empty": "მიუთითეთ ტელეფონი",
-  "temporary_code_not_exists": "დრებითი კოდი არარსებობს",
+  "temporary_code_not_exists": "დრებითი კოდი არ არსებობს",
   "user_already_defined": "მომხმარებელი უკვე დარეგისტრირებულია",
   "temporary_code_incorrect": "დროებითი კოდი არასწორია",
   "success": "წარმატება",

@@ -45,6 +45,9 @@ class _LoginPage extends State<LoginPage> {
   FormData formData = FormData();
   var _countryPhoneCode = "+995";
 
+  final _textTempPassword = TextEditingController();
+  bool _validateTempPassword = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +84,7 @@ class _LoginPage extends State<LoginPage> {
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
-                            formData.phoneNumber = _countryPhoneCode + value;
+                            formData.phoneNumber = value;
                           },
                         ),
                       ),
@@ -90,15 +93,23 @@ class _LoginPage extends State<LoginPage> {
                   Row(
                     children: <Widget>[
                       Expanded(
-                        child: TextFormField(
+                        child: TextField(
+                          controller: _textTempPassword,
                           decoration: InputDecoration(
                             filled: true,
                             labelText: AppLocalizations.of(context)!.code,
+                            //TODO : თარგმნე
+                            errorText: _validateTempPassword ? "შეიყვანეთ კოდი" : null,
                           ),
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
                             formData.tempPassword = value;
+                            if (value.isNotEmpty) {
+                              setState(() {
+                                _validateTempPassword = false;
+                              });
+                            }
                           },
                         ),
                       ),
@@ -116,9 +127,13 @@ class _LoginPage extends State<LoginPage> {
                             if (formData.phoneNumber!.isEmpty) {
                               showAlertDialog.call(context, AppLocalizations.of(context)!.enter_mobile_number, AppLocalizations.of(context)!.notification);
                             } else {
+                              setState(() {
+                                _validateTempPassword = true;
+                                _textTempPassword.text = "";
+                              });
                               if (btnState == ButtonState.Idle) {
                                 startTimer(20);
-                                await generateTemporaryCodeForLogin(context, formData.phoneNumber);
+                                await generateTemporaryCodeForLogin(context, formData.phoneNumber, _countryPhoneCode);
                               }
                             }
                           },
@@ -178,11 +193,10 @@ class _LoginPage extends State<LoginPage> {
                           data.password!.isNotEmpty &&
                           data.tempPassword!.isNotEmpty
                       ) {
-                        var result = await authenticate(context, formData.phoneNumber, formData.password, formData.tempPassword);
+                        var result = await authenticate(context, _countryPhoneCode, formData.phoneNumber, formData.password, formData.tempPassword);
 
                         if (result) {
-                          //TODO : მოსაფიქრებელი შემდეგ რაიქნება
-                          showAlertDialog.call(context, "tesli vaar", "");
+                          Navigator.of(context).pushNamed('/main_menu');
                         } else {
                           showAlertDialog.call(context, AppLocalizations.of(context)!.enter_the_correct_data, "");
                         }
@@ -203,6 +217,22 @@ class _LoginPage extends State<LoginPage> {
                               context,
                               MaterialPageRoute(builder: (context) => const RegisterPage()),
                             );
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: "",
+                      children: [
+                        TextSpan(
+                          //TODO : თარგმნე
+                          text: "დაგავიწყდათ პაროლი?",
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent,),
+                          recognizer: TapGestureRecognizer()..onTap = () {
+                          //  TODO : პაროლის აღდგენა smsoffice-ს გამოყენებით
                           },
                         )
                       ],

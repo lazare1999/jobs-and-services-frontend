@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:jobs_and_services/app/authenticate/login/login_page.dart';
 import 'package:jobs_and_services/app/commons/animation_controller_class.dart';
 import 'package:jobs_and_services/app/commons/language_change_list_view.dart';
-import 'package:jobs_and_services/globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:jobs_and_services/utils/lazo_utils.dart';
 
-import 'package:http/http.dart' as http;
-
-import '../main.dart';
+import '../../main.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({Key? key}) : super(key: key);
@@ -82,27 +78,14 @@ class _BasePage extends State<BasePage> {
                     ),
                   ),
                 ),
-                body: TabBarView(
+                body: const TabBarView(
                   children: [
-                    OutlinedButton(
-                      child: const Text("ping"),
-                      onPressed: () async {
-
-                        try {
-                          final res = await http.post(
-                            Uri.parse(commonUrl + 'ping'),
-                          );
-
-                          if(res.statusCode ==200) {
-
-                            showAlertDialog(context, "pong", "");
-                          }
-                        } catch (e) {
-                          showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
-                        }
-                      }, //exit the app
+                    Center(
+                      child: Text("ჩვენს შესახებ"),
                     ),
-                    const Text("aaaaaaa")
+                    Center(
+                      child: Text("კონტაქტი"),
+                    ),
                   ]
                 ),
                 floatingActionButtonLocation:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jobs_and_services/app/base_page.dart';
+import 'package:jobs_and_services/app/preview/base_page.dart';
+import 'app/main_menu.dart';
 import 'my_route_observer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -93,6 +94,9 @@ class _MyAppState extends State<MyApp> {
         '/': (context) {
           return const BasePage();
         },
+        '/main_menu': (context) {
+          return const MainMenu();
+        }
       },
     );
   }

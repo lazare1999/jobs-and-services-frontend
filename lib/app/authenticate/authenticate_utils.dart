@@ -97,12 +97,13 @@ Future<String?> getAccessToken(context) async {
 //ტოკენის მოპოვება
 
 //ავტორიზაცია
-Future<bool> authenticate(context, String? username, String? password, String? tempPassword) async {
+Future<bool> authenticate(context, String? countryPhoneCode, String? username, String? password, String? tempPassword) async {
 
   try {
     final res = await http.post(
-      Uri.parse(commonUrl + 'app.authenticate'),
+      Uri.parse(commonUrl + 'authenticate'),
       body: {
+        "countryPhoneCode": countryPhoneCode,
         "username": username,
         "password": password,
         "tempPassword": tempPassword,
@@ -133,16 +134,23 @@ Future<void> updateRefreshTokenLocal(resString) async {
 //ავტორიზაცია
 
 //რეგისტრაცია
-Future<String> register(context, String? phoneNumber, String? firstName, String? lastName, String? nickname, String? code) async {
+Future<String> register(context, String? phoneNumber, String? countryPhoneCode, String? firstName, String? lastName, String? nickname, String? code,
+    String? password, String? email, String? address, String? personalNumber, String? passportNumber) async {
   try {
     final res = await http.post(
       Uri.parse(commonUrl + 'register'),
       body: {
         "phoneNumber": phoneNumber,
+        "countryPhoneCode": countryPhoneCode,
         "firstName": firstName,
         "lastName": lastName,
         "nickname": nickname,
         "code": code,
+        "password": password,
+        "email": email,
+        "address": address,
+        "personalNumber": personalNumber,
+        "passportNumber": passportNumber,
       },
     );
 
@@ -153,12 +161,13 @@ Future<String> register(context, String? phoneNumber, String? firstName, String?
 }
 
 //დროებითი კოდები
-Future<void> generateTemporaryCodeForLogin(context, String? username) async {
+Future<void> generateTemporaryCodeForLogin(context, String? username, String? countryCode) async {
   try {
     await http.post(
       Uri.parse(commonUrl + 'generate_temp_code_for_login'),
       body: {
         "username": username,
+        "countryCode": countryCode,
       },
     );
 
@@ -167,12 +176,13 @@ Future<void> generateTemporaryCodeForLogin(context, String? username) async {
   }
 }
 
-Future<void> generateTemporaryCodeForRegister(context, String? username) async {
+Future<void> generateTemporaryCodeForRegister(context, String? username, String? countryCode) async {
   try {
     await http.post(
       Uri.parse(commonUrl + 'generate_temp_code_for_register'),
       body: {
         "username": username,
+        "countryCode": countryCode,
       },
     );
 

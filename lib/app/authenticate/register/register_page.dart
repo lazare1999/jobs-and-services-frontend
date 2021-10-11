@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:email_validator/email_validator.dart';
@@ -17,23 +15,29 @@ part 'register_page.g.dart';
 
 @JsonSerializable()
 class FormData {
+  String? personalNumber;
+  String? passportNumber;
   String? firstName;
   String? lastName;
   String? nickname;
   String? email;
   String? address;
   String? phoneNumber;
+  String? countryPhoneCode;
   String? password;
   String? reEnterPassword;
   String? tempPassword;
 
   FormData({
+    this.personalNumber,
+    this.passportNumber,
     this.firstName,
     this.lastName,
     this.nickname,
     this.email,
     this.address,
     this.phoneNumber,
+    this.countryPhoneCode = "+995",
     this.password,
     this.reEnterPassword,
     this.tempPassword,
@@ -60,7 +64,6 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPage extends State<RegisterPage> {
 
   FormData formData = FormData();
-  var _countryPhoneCode = "+995";
 
   final _textFirstName = TextEditingController();
   bool _validateFirstName = true;
@@ -109,7 +112,12 @@ class _RegisterPage extends State<RegisterPage> {
     1: "პასპორტის ნომერი"
   };
 
-  int userChoice = -1;
+  int _userChoice = -1;
+
+  final _textUserIdentifyChoice = TextEditingController();
+  bool _validateUserIdentifyChoice = true;
+
+  bool _userIdentityApproved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +132,109 @@ class _RegisterPage extends State<RegisterPage> {
             child: Column(
               children: [
                 ...[
-
+                  DropdownButton(
+                      hint: const Text("მაიდენტიფიცირებელი"),
+                      value: _userChoice !=-1 ? _userChoice: null,
+                      items: {
+                        0 : "პირადობის ნომერი",
+                        1 : "პასპორტის ნომერი",
+                      }.map((value, description) {
+                        return MapEntry(
+                            value,
+                            DropdownMenuItem<int>(
+                              value: value,
+                              child: Text(description),
+                            ));
+                      }).values.toList(),
+                      onChanged: (dynamic newValue) {
+                        setState(() {
+                          _userChoice = newValue;
+                          _textUserIdentifyChoice.text = "";
+                          _userIdentityApproved = false;
+                        });
+                      }
+                  ),
+                  Visibility(
+                      visible: _userChoice !=-1,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Expanded(
+                            child:TextField(
+                              controller: _textUserIdentifyChoice,
+                              decoration: InputDecoration(
+                                filled: true,
+                                //TODO : თარგმნე
+                                labelText: _userIdentifyChoice[_userChoice],
+                                errorText: _validateUserIdentifyChoice ? "შეიყვანეთ მონაცემი" : null,
+                              ),
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  if (_userChoice ==0) {
+                                    formData.personalNumber =value;
+                                  } else if (_userChoice ==1) {
+                                    formData.passportNumber =value;
+                                  }
+                                  setState(() {
+                                    _validateUserIdentifyChoice = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    _validateUserIdentifyChoice = true;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 5,),
+                          Expanded(
+                            child: ArgonTimerButton(
+                              height: 50,
+                              width: MediaQuery.of(context).size.width * 0.30,
+                              minWidth: MediaQuery.of(context).size.width * 0.20,
+                              highlightColor: Colors.transparent,
+                              highlightElevation: 0,
+                              roundLoadingShape: false,
+                              onTap: (startTimer, btnState) async {
+                                if (_userChoice ==0 && formData.personalNumber!.isEmpty) {
+                                  setState(() {
+                                    _validateUserIdentifyChoice = true;
+                                  });
+                                } else if (_userChoice ==1 && formData.passportNumber!.isEmpty) {
+                                  setState(() {
+                                    _validateUserIdentifyChoice = true;
+                                  });
+                                } else if (btnState == ButtonState.Idle) {
+                                  //TODO : გასაკეთებელია პირადი ნომრის და პასპორტის ნომრის გადამოწმება
+                                  startTimer(20);
+                                  _userIdentityApproved = true;
+                                }
+                              },
+                              child: const Text(
+                                //TODO : თარგმნე
+                                "გადამოწმება",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15
+                                ),
+                              ),
+                              loader: (timeLeft) {
+                                return Text(
+                                  AppLocalizations.of(context)!.please_wait + " | $timeLeft",
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15
+                                  ),
+                                );
+                              },
+                              borderRadius: 18.0,
+                              color: Colors.blueGrey,
+                              elevation: 0,
+                            ),
+                          )
+                        ],
+                      )
+                  ),
                   TextField(
                       controller: _textFirstName,
                       decoration: InputDecoration(
@@ -159,7 +269,7 @@ class _RegisterPage extends State<RegisterPage> {
                         }
                       }
                   ),
-                  TextFormField(
+                  TextField(
                       decoration: const InputDecoration(
                         filled: true,
                         //TODO : თარგმნე
@@ -211,7 +321,7 @@ class _RegisterPage extends State<RegisterPage> {
                       Expanded(
                         child: CountryCodePicker(
                           onChanged: (value) {
-                            _countryPhoneCode = value.dialCode!;
+                            formData.countryPhoneCode = value.dialCode!;
                           },
                           initialSelection: 'GE',
                           showCountryOnly: false,
@@ -278,14 +388,15 @@ class _RegisterPage extends State<RegisterPage> {
                           onTap: (startTimer, btnState) async {
                             formData.phoneNumber ??= "";
                             if (formData.phoneNumber!.isEmpty) {
-                              showAlertDialog.call(context, AppLocalizations.of(context)!.enter_mobile_number, AppLocalizations.of(context)!.notification);
+                              showAlertDialog.call(context, AppLocalizations.of(context)!.enter_mobile_number, "");
                             } else {
                               setState(() {
                                 _validateTempPassword = true;
+                                _textTempPassword.text = "";
                               });
                               if (btnState == ButtonState.Idle) {
                                 startTimer(20);
-                                await generateTemporaryCodeForLogin(context, formData.phoneNumber);
+                                await generateTemporaryCodeForRegister(context, formData.phoneNumber!, formData.countryPhoneCode);
                               }
                             }
                           },
@@ -318,7 +429,7 @@ class _RegisterPage extends State<RegisterPage> {
                         child: MaterialButton(
                           child: const Icon(Icons.info_outline_rounded),
                           //TODO : თარგმნე
-                          onPressed: () => showAlertDialog(context, "პაროლი უნდა შეიცავდეს სავალდებულო პარამეტრებს", ""),
+                          onPressed: () => showAlertDialog(context, "პაროლი უნდა შეიცავდეს პატარა ასოებს, დიდ ასოებს, ციფრებს და სიმბოლოებს", ""),
                         ),
                       ),
                       const SizedBox(width: 5,),
@@ -434,15 +545,20 @@ class _RegisterPage extends State<RegisterPage> {
                     ),
                     child: Text(AppLocalizations.of(context)!.register),
                     onPressed: () async {
+                      
+                      if (!_userIdentityApproved) {
+                        return;
+                      }
 
                       var data =formData;
+                      data.personalNumber ??= "";
+                      data.passportNumber ??= "";
                       data.phoneNumber ??= "";
                       data.firstName ??= "";
                       data.lastName ??= "";
                       data.nickname ??= "";
                       data.email ??= "";
                       data.address ??= "";
-                      data.nickname ??= "";
                       data.password ??= "";
                       data.reEnterPassword ??= "";
                       data.tempPassword ??= "";
@@ -499,9 +615,19 @@ class _RegisterPage extends State<RegisterPage> {
                         return;
                       }
 
-                      data.phoneNumber = _countryPhoneCode + data.phoneNumber!;
-
-                      var result = await register(context, formData.phoneNumber, formData.firstName, formData.lastName, formData.nickname, formData.password);
+                      var result = await register(context,
+                          formData.phoneNumber,
+                          formData.countryPhoneCode,
+                          formData.firstName,
+                          formData.lastName,
+                          formData.nickname,
+                          formData.tempPassword,
+                          formData.password,
+                          formData.email,
+                          formData.address,
+                          formData.personalNumber,
+                          formData.passportNumber
+                      );
 
                       _success() {
                         Navigator.pop(context,false);
@@ -518,8 +644,6 @@ class _RegisterPage extends State<RegisterPage> {
                         case "success" : _success() ; break;
                         default : showAlertDialog.call(context, AppLocalizations.of(context)!.an_error_occurred, "");
                       }
-
-
                     },
                   ),
                   const TermsOfUse(),
