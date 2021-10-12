@@ -25,8 +25,7 @@ class _MainMenu extends State<MainMenu> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(' '),
-        //TODO : თარგმნე
-        content: const Text("ნამდვილად გინდა გასვლა?"),
+        content: Text(AppLocalizations.of(context)!.really_want_to_log_out),
         actions: <Widget>[
           OutlinedButton(
             child: Text(AppLocalizations.of(context)!.yes),
@@ -35,8 +34,7 @@ class _MainMenu extends State<MainMenu> {
             }, //exit the app
           ),
           OutlinedButton(
-            //TODO : თარგმნე
-            child: const Text("ara"),
+            child: Text(AppLocalizations.of(context)!.no),
             onPressed: ()=> Navigator.pop(context,false),
           )
         ],
@@ -78,13 +76,12 @@ class _MainMenu extends State<MainMenu> {
                     children: <Widget>[
                       ListTile(
                         title: Row(
-                          children: const <Widget>[
-                            Icon(Icons.facebook_outlined, color: Colors.blue),
+                          children: <Widget>[
+                            const Icon(Icons.facebook_outlined, color: Colors.blue),
                             Flexible(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  //TODO : თარგმნე
-                                  child: Text("ჩვენი გვერდი"),
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Text(AppLocalizations.of(context)!.our_page),
                                 )
                             ),
                           ],
@@ -108,6 +105,19 @@ class _MainMenu extends State<MainMenu> {
           toggleButtonMargin: 50,
           toggleButtonSize: 90,
           items: [
+            CircularMenuItem(
+                icon: Icons.facebook_outlined,
+                iconSize: 50,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.white,
+                    blurRadius: 0,
+                  ),
+                ],
+                color: Colors.blue,
+                //ჩემი სეისგურგი
+                onTap: () => launch('https://www.facebook.com/' + facebookHandle)
+            ),
             CircularMenuItem(
                 icon: Icons.facebook_outlined,
                 iconSize: 50,

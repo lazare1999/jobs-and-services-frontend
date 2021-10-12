@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class Info extends StatelessWidget {
 
   final Widget? safeAreaChild;
@@ -10,8 +12,7 @@ class Info extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //TODO : თარგმნე
-        title: Text(title != null ? title! : "ინფო"),
+        title: Text(title != null ? title! : AppLocalizations.of(context)!.info),
         leading: Container()
       ),
       backgroundColor: Colors.white,

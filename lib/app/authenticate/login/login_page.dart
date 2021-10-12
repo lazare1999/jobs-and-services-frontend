@@ -98,8 +98,7 @@ class _LoginPage extends State<LoginPage> {
                           decoration: InputDecoration(
                             filled: true,
                             labelText: AppLocalizations.of(context)!.code,
-                            //TODO : თარგმნე
-                            errorText: _validateTempPassword ? "შეიყვანეთ კოდი" : null,
+                            errorText: _validateTempPassword ? AppLocalizations.of(context)!.enter_code : null,
                           ),
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           keyboardType: TextInputType.number,
@@ -161,10 +160,9 @@ class _LoginPage extends State<LoginPage> {
                     ],
                   ),
                   TextFormField(
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       filled: true,
-                      //TODO : თარგმნე
-                      labelText: "პაროლი",
+                      labelText: AppLocalizations.of(context)!.password,
                     ),
                     obscureText: true,
                     enableSuggestions: false,
@@ -209,8 +207,7 @@ class _LoginPage extends State<LoginPage> {
                       text: "",
                       children: [
                         TextSpan(
-                          //TODO : თარგმნე
-                          text: "არ ხართ დარეგისტრირებული?",
+                          text: AppLocalizations.of(context)!.you_are_not_registered_question,
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent,),
                           recognizer: TapGestureRecognizer()..onTap = () {
                             Navigator.push(
@@ -228,8 +225,7 @@ class _LoginPage extends State<LoginPage> {
                       text: "",
                       children: [
                         TextSpan(
-                          //TODO : თარგმნე
-                          text: "დაგავიწყდათ პაროლი?",
+                          text: AppLocalizations.of(context)!.forgot_your_password_question,
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent,),
                           recognizer: TapGestureRecognizer()..onTap = () {
                           //  TODO : პაროლის აღდგენა smsoffice-ს გამოყენებით

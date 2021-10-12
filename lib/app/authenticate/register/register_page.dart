@@ -86,31 +86,15 @@ class _RegisterPage extends State<RegisterPage> {
   final _textPasswordStrengthOrPasswordIsEmpty = TextEditingController();
   bool _validateThatPasswordContainsAllCharactersOrPasswordIsEmpty = true;
   String _passwordErrorText = "";
-  //TODO : თარგმნე
-  final Map<int, String> _passwordErrorTextMap = {
-    0: "შეიყვანეთ პაროლი",
-    1: "პაროლი სუსტია",
-  };
 
   final _textReEnterPassword = TextEditingController();
   bool _validateReEnterPassword = true;
   String _reEnterPasswordErrorText = "";
-  //TODO : თარგმნე
-  final Map<int, String> _reEnterPasswordErrorTextMap = {
-    0: "დაადასტურეთ პაროლი",
-    1: "პაროლები არ ემთხვევა",
-  };
 
   bool _showReEnterPassword = false;
 
   bool _obscureTextPassword = true;
   bool _obscureTextTempPassword = true;
-
-  //TODO : თარგმნე
-  final Map<int, String> _userIdentifyChoice = {
-    0: "პირადობის ნომერი",
-    1: "პასპორტის ნომერი"
-  };
 
   int _userChoice = -1;
 
@@ -121,6 +105,22 @@ class _RegisterPage extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final Map<int, String> _passwordErrorTextMap = {
+      0: AppLocalizations.of(context)!.enter_password,
+      1: AppLocalizations.of(context)!.password_is_weak,
+    };
+
+    final Map<int, String> _reEnterPasswordErrorTextMap = {
+      0: AppLocalizations.of(context)!.confirm_password,
+      1: AppLocalizations.of(context)!.passwords_does_not_match,
+    };
+
+    final Map<int, String> _userIdentifyChoice = {
+      0: AppLocalizations.of(context)!.personal_number,
+      1: AppLocalizations.of(context)!.passport_number,
+    };
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.register),
@@ -133,11 +133,11 @@ class _RegisterPage extends State<RegisterPage> {
               children: [
                 ...[
                   DropdownButton(
-                      hint: const Text("მაიდენტიფიცირებელი"),
+                      hint: Text(AppLocalizations.of(context)!.identifiable),
                       value: _userChoice !=-1 ? _userChoice: null,
                       items: {
-                        0 : "პირადობის ნომერი",
-                        1 : "პასპორტის ნომერი",
+                        0: AppLocalizations.of(context)!.personal_number,
+                        1: AppLocalizations.of(context)!.passport_number,
                       }.map((value, description) {
                         return MapEntry(
                             value,
@@ -160,13 +160,13 @@ class _RegisterPage extends State<RegisterPage> {
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           Expanded(
+                            flex: 3,
                             child:TextField(
                               controller: _textUserIdentifyChoice,
                               decoration: InputDecoration(
                                 filled: true,
-                                //TODO : თარგმნე
                                 labelText: _userIdentifyChoice[_userChoice],
-                                errorText: _validateUserIdentifyChoice ? "შეიყვანეთ მონაცემი" : null,
+                                errorText: _validateUserIdentifyChoice ? AppLocalizations.of(context)!.enter_data : null,
                               ),
                               onChanged: (value) {
                                 if (value.isNotEmpty) {
@@ -188,6 +188,7 @@ class _RegisterPage extends State<RegisterPage> {
                           ),
                           const SizedBox(width: 5,),
                           Expanded(
+                            flex: 2,
                             child: ArgonTimerButton(
                               height: 50,
                               width: MediaQuery.of(context).size.width * 0.30,
@@ -210,10 +211,9 @@ class _RegisterPage extends State<RegisterPage> {
                                   _userIdentityApproved = true;
                                 }
                               },
-                              child: const Text(
-                                //TODO : თარგმნე
-                                "გადამოწმება",
-                                style: TextStyle(
+                              child: Text(
+                                AppLocalizations.of(context)!.verification,
+                                style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 15
                                 ),
@@ -240,8 +240,7 @@ class _RegisterPage extends State<RegisterPage> {
                       decoration: InputDecoration(
                         filled: true,
                         labelText: AppLocalizations.of(context)!.first_name,
-                        //TODO : თარგმნე
-                        errorText: _validateFirstName ? "შეიყვანეთ სახელი" : null,
+                        errorText: _validateFirstName ? AppLocalizations.of(context)!.enter_first_name : null,
                       ),
                       onChanged: (value) {
                         formData.firstName = value;
@@ -257,8 +256,7 @@ class _RegisterPage extends State<RegisterPage> {
                       decoration: InputDecoration(
                         filled: true,
                         labelText: AppLocalizations.of(context)!.last_name,
-                        //TODO : თარგმნე
-                        errorText: _validateLastName ? "შეიყვანეთ გვარი" : null,
+                        errorText: _validateLastName ? AppLocalizations.of(context)!.enter_last_name : null,
                       ),
                       onChanged: (value) {
                         formData.lastName = value;
@@ -270,10 +268,9 @@ class _RegisterPage extends State<RegisterPage> {
                       }
                   ),
                   TextField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         filled: true,
-                        //TODO : თარგმნე
-                        labelText: "ზედმეტსახელი",
+                        labelText: AppLocalizations.of(context)!.nickname,
                       ),
                       onChanged: (value) {
                         formData.nickname = value;
@@ -283,9 +280,8 @@ class _RegisterPage extends State<RegisterPage> {
                       controller: _textEmail,
                       decoration: InputDecoration(
                         filled: true,
-                        //TODO : თარგმნე
-                        labelText: "email",
-                        errorText: _validateEmail ? "მეილი არასწორია" : null,
+                        labelText: AppLocalizations.of(context)!.email,
+                        errorText: _validateEmail ? AppLocalizations.of(context)!.email_is_invalid : null,
                       ),
                       onChanged: (value) {
                         if(value.isNotEmpty && !EmailValidator.validate(value)) {
@@ -303,9 +299,8 @@ class _RegisterPage extends State<RegisterPage> {
                       controller: _textAddress,
                       decoration: InputDecoration(
                         filled: true,
-                        //TODO : თარგმნე
-                        labelText: "მისამართი",
-                        errorText: _validateAddress ? "შეიყვანეთ მისამართი" : null,
+                        labelText: AppLocalizations.of(context)!.address,
+                        errorText: _validateAddress ? AppLocalizations.of(context)!.enter_address : null,
                       ),
                       onChanged: (value) {
                         formData.address = value;
@@ -338,8 +333,7 @@ class _RegisterPage extends State<RegisterPage> {
                           decoration: InputDecoration(
                             filled: true,
                             labelText: AppLocalizations.of(context)!.phone,
-                            //TODO : თარგმნე
-                            errorText: _validatePhone ? "შეიყვანეთ ტელეფონი" : null,
+                            errorText: _validatePhone ? AppLocalizations.of(context)!.enter_phone : null,
                           ),
                           onChanged: (value) {
                             formData.phoneNumber = value;
@@ -361,8 +355,7 @@ class _RegisterPage extends State<RegisterPage> {
                           decoration: InputDecoration(
                             filled: true,
                             labelText: AppLocalizations.of(context)!.code,
-                            //TODO : თარგმნე
-                            errorText: _validateTempPassword ? "შეიყვანეთ კოდი" : null,
+                            errorText: _validateTempPassword ? AppLocalizations.of(context)!.enter_code : null,
                           ),
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           keyboardType: TextInputType.number,
@@ -428,8 +421,7 @@ class _RegisterPage extends State<RegisterPage> {
                       Expanded(
                         child: MaterialButton(
                           child: const Icon(Icons.info_outline_rounded),
-                          //TODO : თარგმნე
-                          onPressed: () => showAlertDialog(context, "პაროლი უნდა შეიცავდეს პატარა ასოებს, დიდ ასოებს, ციფრებს და სიმბოლოებს", ""),
+                          onPressed: () => showAlertDialog(context, AppLocalizations.of(context)!.password_strength_criteria, ""),
                         ),
                       ),
                       const SizedBox(width: 5,),
@@ -439,8 +431,7 @@ class _RegisterPage extends State<RegisterPage> {
                           controller: _textPasswordStrengthOrPasswordIsEmpty,
                           decoration: InputDecoration(
                             filled: true,
-                            //TODO : თარგმნე
-                            labelText: "პაროლი",
+                            labelText: AppLocalizations.of(context)!.password,
                             errorText: _validateThatPasswordContainsAllCharactersOrPasswordIsEmpty ? _passwordErrorText.isEmpty ? _passwordErrorTextMap[0]! : _passwordErrorText : null,
                           ),
                           obscureText: _obscureTextPassword,
@@ -497,8 +488,7 @@ class _RegisterPage extends State<RegisterPage> {
                               controller: _textReEnterPassword,
                               decoration: InputDecoration(
                                 filled: true,
-                                //TODO : თარგმნე
-                                labelText: "დაადასტურეთ პაროლი",
+                                labelText: AppLocalizations.of(context)!.confirm_password,
                                 errorText: _validateReEnterPassword ? _reEnterPasswordErrorText.isEmpty ? _reEnterPasswordErrorTextMap[0]! : _reEnterPasswordErrorText : null,
                               ),
                               obscureText: _obscureTextTempPassword,
@@ -631,8 +621,7 @@ class _RegisterPage extends State<RegisterPage> {
 
                       _success() {
                         Navigator.pop(context,false);
-                        //TODO : თარგმნე
-                        showAlertDialog.call(context, "თქვენ წარმატებით გაიარეთ რეგისტრაცია", "");
+                        showAlertDialog.call(context, AppLocalizations.of(context)!.you_have_successfully_registered, "");
                       }
 
                       switch (result) {
