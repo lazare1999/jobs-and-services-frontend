@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:jobs_and_services/app/authenticate/register/register_page.dart';
-import 'package:jobs_and_services/app/authenticate/authenticate_utils.dart';
+import 'package:jobs_and_services/app/authenticate/utils/authenticate_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
 import 'package:jobs_and_services/utils/lazo_utils.dart';

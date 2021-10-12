@@ -8,6 +8,7 @@ import 'dart:math' show asin, cos, pow, sqrt;
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 var commonGoogleUrl = 'https://geocourier.ge/google/';
 
@@ -149,6 +150,16 @@ bool validatePassword(String value) {
   return regExp.hasMatch(value);
 }
 
+void navigateToLastPage(context) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? lastRoute = prefs.getString('last_route');
+  if(lastRoute ==null) {
+    return;
+  }
+  if (lastRoute.isNotEmpty && lastRoute != '/') {
+    Navigator.of(context).pushNamed(lastRoute);
+  }
+}
 
 //TODO : ნოტიფიკაცია
 // Future<void> showNotification() async {

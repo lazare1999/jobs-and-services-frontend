@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jobs_and_services/app/authenticate/login/login_page.dart';
 import 'package:jobs_and_services/app/commons/animation_controller_class.dart';
 import 'package:jobs_and_services/app/commons/language_change_list_view.dart';
+import 'package:jobs_and_services/utils/lazo_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -21,19 +22,8 @@ class _BasePage extends State<BasePage> {
   @override
   void initState() {
     super.initState();
-    _navigateToLastPage();
+    navigateToLastPage(context);
     _updateLocale();
-  }
-
-  void _navigateToLastPage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? lastRoute = prefs.getString('last_route');
-    if(lastRoute ==null) {
-      return;
-    }
-    if (lastRoute.isNotEmpty && lastRoute != '/') {
-      Navigator.of(context).pushNamed(lastRoute);
-    }
   }
 
   Future<void> _updateLocale() async {

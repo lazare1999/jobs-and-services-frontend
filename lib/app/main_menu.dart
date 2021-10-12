@@ -6,7 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../globals.dart';
-import 'authenticate/authenticate_utils.dart';
+import 'authenticate/utils/authenticate_utils.dart';
 import 'commons/info/info.dart';
 
 class MainMenu extends StatefulWidget {

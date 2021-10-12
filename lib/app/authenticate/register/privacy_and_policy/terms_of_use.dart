@@ -2,7 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:jobs_and_services/app/authenticate/privacy_and_policy/policy_dialog.dart';
+import 'package:jobs_and_services/app/authenticate/register/privacy_and_policy/policy_dialog.dart';
 
 class TermsOfUse extends StatelessWidget {
   const TermsOfUse({
