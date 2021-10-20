@@ -289,6 +289,7 @@ class _RegisterPage extends State<RegisterPage> {
                             _validateEmail = true;
                           });
                         } else {
+                          formData.email = value;
                           setState(() {
                             _validateEmail = false;
                           });
@@ -316,9 +317,9 @@ class _RegisterPage extends State<RegisterPage> {
                       Expanded(
                         child: CountryCodePicker(
                           onChanged: (value) {
-                            formData.phoneNumber = formData.phoneNumber!.substring(formData.countryPhoneCode.length);
+                            formData.phoneNumber = formData.phoneNumber!.substring(formData.countryPhoneCode!.length);
                             formData.countryPhoneCode = value.dialCode!;
-                            formData.phoneNumber = formData.countryPhoneCode + formData.phoneNumber!;
+                            formData.phoneNumber = (formData.countryPhoneCode! + formData.phoneNumber!);
                           },
                           initialSelection: 'GE',
                           showCountryOnly: false,
@@ -631,6 +632,7 @@ class _RegisterPage extends State<RegisterPage> {
                         case "phone_number_empty" : showAlertDialog.call(context, AppLocalizations.of(context)!.phone_number_empty, ""); break;
                         case "temporary_code_not_exists" : showAlertDialog.call(context, AppLocalizations.of(context)!.temporary_code_not_exists, ""); break;
                         case "user_already_defined" : showAlertDialog.call(context, AppLocalizations.of(context)!.user_already_defined, ""); break;
+                        case "email_already_in_use" : showAlertDialog.call(context, AppLocalizations.of(context)!.email_already_in_use, ""); break;
                         case "temporary_code_incorrect" : showAlertDialog.call(context, AppLocalizations.of(context)!.temporary_code_incorrect, ""); break;
                         case "success" : _success() ; break;
                         default : showAlertDialog.call(context, AppLocalizations.of(context)!.an_error_occurred, "");

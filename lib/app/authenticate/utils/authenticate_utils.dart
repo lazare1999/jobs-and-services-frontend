@@ -133,6 +133,42 @@ Future<bool> authenticate(context, String? countryPhoneCode, String? username, S
   return false;
 }
 
+Future<String> resetPasswordByPhone(context, String? countryPhoneCode, String? phoneNumber, String? newPassword, String? tempPassword) async {
+  try {
+    final res = await http.post(
+      Uri.parse(commonUrl + 'reset_password_by_phone'),
+      body: {
+        "countryPhoneCode": countryPhoneCode,
+        "phoneNumber": phoneNumber,
+        "newPassword": newPassword,
+        "tempPassword": tempPassword,
+      },
+    );
+
+    return res.body;
+  } catch (e) {
+    return e.toString();
+  }
+}
+
+
+Future<String> resetPasswordByEmail(context, String? email, String? newPassword, String? tempPassword) async {
+  try {
+    final res = await http.post(
+      Uri.parse(commonUrl + 'reset_password_by_email'),
+      body: {
+        "email": email,
+        "newPassword": newPassword,
+        "tempPassword": tempPassword,
+      },
+    );
+
+    return res.body;
+  } catch (e) {
+    return e.toString();
+  }
+}
+
 Future<void> updateRefreshTokenLocal(resString) async {
   auth.update(resString);
 
@@ -193,6 +229,35 @@ Future<void> generateTemporaryCodeForRegister(context, String? username, String?
       body: {
         "username": username,
         "countryCode": countryCode,
+      },
+    );
+
+  } catch (e) {
+    showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
+  }
+}
+
+Future<void> generateTempCodeForResetPasswordByPhone(context, String? countryCode, String? phoneNumber) async {
+  try {
+    await http.post(
+      Uri.parse(commonUrl + 'get_temp_code_for_reset_password_by_phone'),
+      body: {
+        "countryCode": countryCode,
+        "phoneNumber": phoneNumber,
+      },
+    );
+
+  } catch (e) {
+    showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
+  }
+}
+
+Future<void> generateTempCodeForResetPasswordByEmail(context, String? email) async {
+  try {
+    await http.post(
+      Uri.parse(commonUrl + 'get_temp_code_for_reset_password_by_email'),
+      body: {
+        "email": email,
       },
     );
 

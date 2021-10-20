@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:jobs_and_services/app/authenticate/register/register_page.dart';
+import 'package:jobs_and_services/app/authenticate/reset_password/reset_password_page.dart';
 import 'package:jobs_and_services/app/authenticate/utils/authenticate_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
@@ -230,7 +231,10 @@ class _LoginPage extends State<LoginPage> {
                           text: AppLocalizations.of(context)!.forgot_your_password_question,
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent,),
                           recognizer: TapGestureRecognizer()..onTap = () {
-                          //  TODO : პაროლის აღდგენა smsoffice-ს გამოყენებით
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ResetPasswordPage()),
+                            );
                           },
                         )
                       ],

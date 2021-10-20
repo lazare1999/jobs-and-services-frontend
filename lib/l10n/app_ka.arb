@@ -30,7 +30,7 @@
   "temporary_code_empty": "მიუთითეთ დროებითი კოდი",
   "phone_number_empty": "მიუთითეთ ტელეფონი",
   "temporary_code_not_exists": "დრებითი კოდი არ არსებობს",
-  "user_already_defined": "მომხმარებელი უკვე დარეგისტრირებულია",
+  "user_already_defined": "მომხმარებელი მოცემული ტელეფონის ნომრით უკვე არსებობს",
   "temporary_code_incorrect": "დროებითი კოდი არასწორია",
   "success": "წარმატება",
   "an_error_occurred": "დაფიქსირდა შეცდომა",
@@ -60,5 +60,9 @@
   "our_page": "ჩვენი გვერდი",
   "info": "ინფო",
   "you_are_not_registered_question": "არ ხართ დარეგისტრირებული?",
-  "forgot_your_password_question": "დაგავიწყდათ პაროლი?"
+  "forgot_your_password_question": "დაგავიწყდათ პაროლი?",
+  "email_already_in_use": "მომხმარებელი მოცემული მეილით უკვე არსებობს",
+  "email_empty": "ელ. ფოსტა ცარიელია",
+  "new_password": "ახალი პაროლი",
+  "update": "განახლება"
 }

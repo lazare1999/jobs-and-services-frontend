@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:jobs_and_services/custom/custom_icons_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../globals.dart';
@@ -96,6 +97,8 @@ class _MainMenu extends State<MainMenu> {
         body: CircularMenu(
           alignment: Alignment.center,
           toggleButtonColor: Colors.blueGrey,
+          startingAngleInRadian: 20.0,
+          endingAngleInRadian: 20.0,
           toggleButtonBoxShadow: const [
             BoxShadow(
               color: Colors.white,
@@ -106,18 +109,19 @@ class _MainMenu extends State<MainMenu> {
           toggleButtonSize: 90,
           items: [
             CircularMenuItem(
-                icon: Icons.facebook_outlined,
+                icon: Icons.search_outlined,
                 iconSize: 50,
+                color: Colors.blueGrey,
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.white,
                     blurRadius: 0,
                   ),
                 ],
-                color: Colors.blue,
-                //ჩემი სეისგურგი
-                onTap: () => launch('https://www.facebook.com/' + facebookHandle)
-            ),
+                onTap: () async {
+                // TODO : მოძებნე მოხელე
+
+                }),
             CircularMenuItem(
                 icon: Icons.facebook_outlined,
                 iconSize: 50,
@@ -132,44 +136,33 @@ class _MainMenu extends State<MainMenu> {
                 onTap: () => launch('https://www.facebook.com/' + facebookHandle)
             ),
             CircularMenuItem(
-                icon: Icons.facebook_outlined,
+                icon: CustomIcons.craftsman,
                 iconSize: 50,
+                color: Colors.blueGrey,
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.white,
                     blurRadius: 0,
                   ),
                 ],
-                color: Colors.blue,
-                //ჩემი სეისგურგი
-                onTap: () => launch('https://www.facebook.com/' + facebookHandle)
-            ),
+                onTap: () async {
+                  // TODO : მოხელე
+
+                }),
             CircularMenuItem(
-                icon: Icons.facebook_outlined,
+                icon: CustomIcons.fbMessenger,
                 iconSize: 50,
+                color: Colors.purple,
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.white,
                     blurRadius: 0,
                   ),
                 ],
-                color: Colors.blue,
-                //ჩემი სეისგურგი
-                onTap: () => launch('https://www.facebook.com/' + facebookHandle)
-            ),
-            CircularMenuItem(
-                icon: Icons.facebook_outlined,
-                iconSize: 50,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 0,
-                  ),
-                ],
-                color: Colors.blue,
-                //ჩემი სეისგურგი
-                onTap: () => launch('https://www.facebook.com/' + facebookHandle)
-            ),
+                onTap: () {
+                  //მესენჯერი
+                  launch("http://$messengerUrl");
+                }),
           ],
         ),
       )
