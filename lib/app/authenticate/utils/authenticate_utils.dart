@@ -119,7 +119,7 @@ Future<bool> authenticate(context, String? countryPhoneCode, String? username, S
 
     if(res.statusCode ==200) {
       final SharedPreferences _prefs = await SharedPreferences.getInstance();
-      _prefs.setString("phone", username!);
+      _prefs.setString("phone", username);
       _prefs.setString("countryCode", countryPhoneCode!);
       final String resString = res.body;
       await updateRefreshTokenLocal(resString);

@@ -316,7 +316,9 @@ class _RegisterPage extends State<RegisterPage> {
                       Expanded(
                         child: CountryCodePicker(
                           onChanged: (value) {
+                            formData.phoneNumber = formData.phoneNumber!.substring(formData.countryPhoneCode.length);
                             formData.countryPhoneCode = value.dialCode!;
+                            formData.phoneNumber = formData.countryPhoneCode + formData.phoneNumber!;
                           },
                           initialSelection: 'GE',
                           showCountryOnly: false,

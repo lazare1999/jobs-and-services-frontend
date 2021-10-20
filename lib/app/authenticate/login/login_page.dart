@@ -66,7 +66,9 @@ class _LoginPage extends State<LoginPage> {
                       Expanded(
                         child: CountryCodePicker(
                           onChanged: (value) {
+                            formData.phoneNumber = formData.phoneNumber!.substring(_countryPhoneCode.length);
                             _countryPhoneCode = value.dialCode!;
+                            formData.phoneNumber = _countryPhoneCode + formData.phoneNumber!;
                           },
                           initialSelection: 'GE',
                           showCountryOnly: false,
