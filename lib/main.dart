@@ -70,6 +70,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       onGenerateTitle: (BuildContext context) => AppLocalizations.of(context)!.title,
       title: 'დასაქმება',
       navigatorObservers: <NavigatorObserver>[
