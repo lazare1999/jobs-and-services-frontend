@@ -37,8 +37,7 @@ class AuthenticationResponse {
     "refreshExpiresIn": refreshExpiresIn,
   };
 
-  void update(String str) {
-    var body = json.decode(str);
+  void update(var body) {
 
     if (body == null) {
       return;

@@ -86,7 +86,8 @@ class _ResetPasswordPage extends State<ResetPasswordPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.login),
+        //TODO : თარგმნე
+        title: const Text("პაროლის განახლება"),
       ),
       body: Form(
         child: Scrollbar(

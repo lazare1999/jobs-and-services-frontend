@@ -2,7 +2,6 @@ import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:jobs_and_services/app/authenticate/register/privacy_and_policy/terms_of_use.dart';
 import 'package:jobs_and_services/app/authenticate/utils/authenticate_utils.dart';
@@ -51,11 +50,8 @@ class FormData {
 
 
 class RegisterPage extends StatefulWidget {
-  final http.Client? httpClient;
 
-  const RegisterPage({Key? key,
-    this.httpClient,
-  }) : super(key: key);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   _RegisterPage createState() => _RegisterPage();

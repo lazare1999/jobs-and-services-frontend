@@ -1,5 +1,5 @@
-var messengerUrl = "m.me/michi.nio.18";
-var email = "lazarekvirtia@gmail.com";
-var phoneNumber = "+995595221341";
-var facebookHandle = "michi.nio.18";
-var commonUrl = 'http://localhost:8081/';
+import 'package:dio/dio.dart';
+import 'package:jobs_and_services/app/authenticate/client/jobs_and_services_api_client.dart';
+
+var jobsAndServicesClient = JobsAndServicesClient().getApiClient();
+var dioDefault = Dio();

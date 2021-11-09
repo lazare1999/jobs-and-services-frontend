@@ -1,12 +1,12 @@
 import 'package:circular_menu/circular_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:jobs_and_services/custom/custom_icons_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../globals.dart';
 import 'authenticate/utils/authenticate_utils.dart';
 import 'commons/info/info.dart';
 
@@ -71,24 +71,74 @@ class _MainMenu extends State<MainMenu> {
         ),
         endDrawer: Drawer(
             child: Info(
-              safeAreaChild: Column(
+              //TODO : თარგმნე
+              title: ' ',
+              safeAreaChild: ListView(
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Row(
-                          children: <Widget>[
-                            const Icon(Icons.facebook_outlined, color: Colors.blue),
-                            Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(AppLocalizations.of(context)!.our_page),
-                                )
-                            ),
-                          ],
+                  ListTile(
+                    title: Row(
+                      children: const <Widget>[
+                        Icon(Icons.search_outlined, color: Colors.blueGrey),
+                        Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              //TODO : თარგმნე
+                              child: Text("მოძებნე მოხელე"),
+                            )
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                      color: Colors.black
+                  ),
+                  ListTile(
+                    title: Row(
+                      children: const <Widget>[
+                        Icon(CustomIcons.craftsman, color: Colors.blueGrey),
+                        Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              //TODO : თარგმნე
+                              child: Text("ჩემი კვალიფიკაცია"),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                      color: Colors.black
+                  ),
+                  ListTile(
+                    title: Row(
+                      children: const <Widget>[
+                        Icon(Icons.facebook_outlined, color: Colors.blue),
+                        Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              //TODO : თარგმნე
+                              child: Text("ჩვენი გვერდი"),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                      color: Colors.black
+                  ),
+                  ListTile(
+                    title: Row(
+                      children: const <Widget>[
+                        Icon(CustomIcons.fbMessenger, color: Colors.purple),
+                        Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              //TODO : თარგმნე
+                              child: Text("მოგვწერეთ"),
+                            )
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -133,7 +183,7 @@ class _MainMenu extends State<MainMenu> {
                 ],
                 color: Colors.blue,
                 //ჩემი სეისგურგი
-                onTap: () => launch('https://www.facebook.com/' + facebookHandle)
+                onTap: () => launch('https://www.facebook.com/' + dotenv.env['FACEBOOK']!)
             ),
             CircularMenuItem(
                 icon: CustomIcons.craftsman,
@@ -145,9 +195,8 @@ class _MainMenu extends State<MainMenu> {
                     blurRadius: 0,
                   ),
                 ],
-                onTap: () async {
-                  // TODO : მოხელე
-
+                onTap: () {
+                  Navigator.of(context).pushNamed('/craftsman');
                 }),
             CircularMenuItem(
                 icon: CustomIcons.fbMessenger,
@@ -161,7 +210,7 @@ class _MainMenu extends State<MainMenu> {
                 ],
                 onTap: () {
                   //მესენჯერი
-                  launch("http://$messengerUrl");
+                  launch("http://" + dotenv.env['MESSENGER']!);
                 }),
           ],
         ),

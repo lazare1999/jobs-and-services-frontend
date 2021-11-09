@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
-
 class ProfileModel {
   int? id;
   String? firstName;
@@ -25,8 +21,7 @@ class ProfileModel {
     };
   }
 
-  void updateProfile(Response response) {
-    var body = json.decode(utf8.decode(response.bodyBytes));
+  void updateProfile(var body) {
 
     if (body == null) {
       return;

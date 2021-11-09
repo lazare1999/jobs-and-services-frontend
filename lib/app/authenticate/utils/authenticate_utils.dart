@@ -1,17 +1,16 @@
 library my_prj.authenticate_utils;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jobs_and_services/app/authenticate/models/authentication_response.dart';
 import 'package:jobs_and_services/app/sqflite/services/profile_service.dart';
+import 'package:jobs_and_services/globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../globals.dart';
 import '../../../main.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -24,16 +23,16 @@ AuthenticationResponse auth = AuthenticationResponse();
 var _profileService = ProfileService();
 
 //ტოკენის მოპოვება
-Future<String?> getJwtViaRefreshToken(context) async {
+Future<String?> getJwtViaRefreshToken() async {
   try {
-    final res = await http.post(
-      Uri.parse(commonUrl + 'jwt_via_refresh_token'),
-      body: {
+    final res = await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'jwt_via_refresh_token',
+      queryParameters: {
         "refreshToken": auth.refreshToken,
       },
     );
 
-    final String resString = res.body;
+    final String resString = res.data;
 
     if(res.statusCode !=200) {
       return null;
@@ -47,7 +46,7 @@ Future<String?> getJwtViaRefreshToken(context) async {
   }
 }
 
-Future<String?> getJwtViaRefreshTokenFromSharedRefs(context) async {
+Future<String?> getJwtViaRefreshTokenFromSharedRefs() async {
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -64,38 +63,35 @@ Future<String?> getJwtViaRefreshTokenFromSharedRefs(context) async {
   }
 
   try {
-    final res = await http.post(
-      Uri.parse(commonUrl + 'jwt_via_refresh_token'),
-      body: {
+    final res = await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'jwt_via_refresh_token',
+      queryParameters: {
         "refreshToken": refreshToken,
       },
     );
-
-    final String resString = res.body;
 
     if(res.statusCode !=200) {
       return null;
     }
 
-    await updateRefreshTokenLocal(resString);
-    var body = json.decode(resString);
-    return body["jwt"];
+    await updateRefreshTokenLocal(res.data);
+    return res.data["jwt"];
   } catch (e) {
     return null;
   }
 }
 
-Future<String?> getAccessToken(context) async {
+Future<String?> getAccessToken() async {
 
   if (auth.jwt !=null && DateTime.now().isBefore(auth.expiresAt!)) {
     return auth.jwt;
   }
 
   if (auth.refreshToken !=null && DateTime.now().isBefore(auth.refreshExpiresAt!)) {
-    return await getJwtViaRefreshToken(context);
+    return await getJwtViaRefreshToken();
   }
 
-  return await getJwtViaRefreshTokenFromSharedRefs(context);
+  return await getJwtViaRefreshTokenFromSharedRefs();
 }
 //ტოკენის მოპოვება
 
@@ -107,9 +103,9 @@ Future<bool> authenticate(context, String? countryPhoneCode, String? username, S
   }
 
   try {
-    final res = await http.post(
-      Uri.parse(commonUrl + 'authenticate'),
-      body: {
+    final res = await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'authenticate',
+      queryParameters: {
         "countryPhoneCode": countryPhoneCode,
         "username": username,
         "password": password,
@@ -120,13 +116,10 @@ Future<bool> authenticate(context, String? countryPhoneCode, String? username, S
     if(res.statusCode ==200) {
       final SharedPreferences _prefs = await SharedPreferences.getInstance();
       _prefs.setString("phone", username);
-      _prefs.setString("countryCode", countryPhoneCode!);
-      final String resString = res.body;
-      await updateRefreshTokenLocal(resString);
+      await updateRefreshTokenLocal(res.data);
       return true;
     }
   } catch (e) {
-    showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
     return false;
   }
 
@@ -135,9 +128,9 @@ Future<bool> authenticate(context, String? countryPhoneCode, String? username, S
 
 Future<String> resetPasswordByPhone(context, String? countryPhoneCode, String? phoneNumber, String? newPassword, String? tempPassword) async {
   try {
-    final res = await http.post(
-      Uri.parse(commonUrl + 'reset_password_by_phone'),
-      body: {
+    final res = await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'reset_password_by_phone',
+      queryParameters: {
         "countryPhoneCode": countryPhoneCode,
         "phoneNumber": phoneNumber,
         "newPassword": newPassword,
@@ -145,7 +138,7 @@ Future<String> resetPasswordByPhone(context, String? countryPhoneCode, String? p
       },
     );
 
-    return res.body;
+    return res.data;
   } catch (e) {
     return e.toString();
   }
@@ -154,23 +147,23 @@ Future<String> resetPasswordByPhone(context, String? countryPhoneCode, String? p
 
 Future<String> resetPasswordByEmail(context, String? email, String? newPassword, String? tempPassword) async {
   try {
-    final res = await http.post(
-      Uri.parse(commonUrl + 'reset_password_by_email'),
-      body: {
+    final res = await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'reset_password_by_email',
+      queryParameters: {
         "email": email,
         "newPassword": newPassword,
         "tempPassword": tempPassword,
       },
     );
 
-    return res.body;
+    return res.data;
   } catch (e) {
     return e.toString();
   }
 }
 
-Future<void> updateRefreshTokenLocal(resString) async {
-  auth.update(resString);
+Future<void> updateRefreshTokenLocal(res) async {
+  auth.update(res);
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setString("refresh_token", auth.refreshToken!);
@@ -183,9 +176,9 @@ Future<void> updateRefreshTokenLocal(resString) async {
 Future<String> register(context, String? phoneNumber, String? countryPhoneCode, String? firstName, String? lastName, String? nickname, String? code,
     String? password, String? email, String? address, String? personalNumber, String? passportNumber) async {
   try {
-    final res = await http.post(
-      Uri.parse(commonUrl + 'register'),
-      body: {
+    final res = await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'register',
+      queryParameters: {
         "phoneNumber": phoneNumber,
         "countryPhoneCode": countryPhoneCode,
         "firstName": firstName,
@@ -200,7 +193,7 @@ Future<String> register(context, String? phoneNumber, String? countryPhoneCode, 
       },
     );
 
-    return res.body;
+    return res.data;
   } catch (e) {
     return e.toString();
   }
@@ -209,9 +202,9 @@ Future<String> register(context, String? phoneNumber, String? countryPhoneCode, 
 //დროებითი კოდები
 Future<void> generateTemporaryCodeForLogin(context, String? username, String? countryCode) async {
   try {
-    await http.post(
-      Uri.parse(commonUrl + 'generate_temp_code_for_login'),
-      body: {
+    await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'generate_temp_code_for_login',
+      queryParameters: {
         "username": username,
         "countryCode": countryCode,
       },
@@ -224,9 +217,9 @@ Future<void> generateTemporaryCodeForLogin(context, String? username, String? co
 
 Future<void> generateTemporaryCodeForRegister(context, String? username, String? countryCode) async {
   try {
-    await http.post(
-      Uri.parse(commonUrl + 'generate_temp_code_for_register'),
-      body: {
+    await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'generate_temp_code_for_register',
+      queryParameters: {
         "username": username,
         "countryCode": countryCode,
       },
@@ -239,9 +232,9 @@ Future<void> generateTemporaryCodeForRegister(context, String? username, String?
 
 Future<void> generateTempCodeForResetPasswordByPhone(context, String? countryCode, String? phoneNumber) async {
   try {
-    await http.post(
-      Uri.parse(commonUrl + 'get_temp_code_for_reset_password_by_phone'),
-      body: {
+    await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'get_temp_code_for_reset_password_by_phone',
+      queryParameters: {
         "countryCode": countryCode,
         "phoneNumber": phoneNumber,
       },
@@ -254,9 +247,9 @@ Future<void> generateTempCodeForResetPasswordByPhone(context, String? countryCod
 
 Future<void> generateTempCodeForResetPasswordByEmail(context, String? email) async {
   try {
-    await http.post(
-      Uri.parse(commonUrl + 'get_temp_code_for_reset_password_by_email'),
-      body: {
+    await dioDefault.post(
+      dotenv.env['JOBS_AND_SERVICES_API_BASE_URL']! + 'get_temp_code_for_reset_password_by_email',
+      queryParameters: {
         "email": email,
       },
     );
@@ -281,19 +274,9 @@ Future<void> _restart(context) async {
 Future<void> logout(context) async {
 
   try {
-    var token = await getAccessToken(context);
 
-    if(token ==null) {
-      await _restart(context);
-      return;
-    }
+    await jobsAndServicesClient.post('logout_from_system');
 
-    await http.post(
-      Uri.parse(commonUrl + 'logout_from_system'),
-      headers: {
-        HttpHeaders.authorizationHeader : "Bearer " + token
-      },
-    );
     await _restart(context);
   } catch (e) {
     showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);

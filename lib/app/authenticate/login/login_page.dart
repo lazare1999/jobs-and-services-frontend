@@ -194,13 +194,13 @@ class _LoginPage extends State<LoginPage> {
                           data.password!.isNotEmpty &&
                           data.tempPassword!.isNotEmpty
                       ) {
-                        var result = await authenticate(context, _countryPhoneCode, formData.phoneNumber, formData.password, formData.tempPassword);
+                        // var result = await authenticate(context, _countryPhoneCode, formData.phoneNumber, formData.password, formData.tempPassword);
 
-                        if (result) {
+                        // if (result) {
                           Navigator.of(context).pushNamed('/main_menu');
-                        } else {
-                          showAlertDialog.call(context, AppLocalizations.of(context)!.enter_the_correct_data, "");
-                        }
+                        // } else {
+                        //   showAlertDialog.call(context, AppLocalizations.of(context)!.enter_the_correct_data, "");
+                        // }
                       }
                     }
                   ),

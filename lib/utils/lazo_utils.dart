@@ -1,16 +1,12 @@
 library my_prj.lazo_utils;
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'dart:math' show asin, cos, pow, sqrt;
-import 'package:http/http.dart' as http;
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-var commonGoogleUrl = 'https://geocourier.ge/google/';
 
 bool isInteger(num? value) =>
     value is int || value == value!.roundToDouble();
@@ -99,18 +95,6 @@ double coordinateDistance(lat1, lon1, lat2, lon2) {
 double roundDouble(double value, int places){
   double mod = pow(10.0, places) as double;
   return ((value * mod).round().toDouble() / mod);
-}
-
-Future<List<dynamic>?> getPlaceViaCoordinates(lat, lng, _kGoogleApiKey, context) async {
-  Uri myUri = Uri.parse(commonGoogleUrl +'geocode/json?latlng=$lat,$lng&key=$_kGoogleApiKey');
-
-  final response = await http.get(myUri);
-
-  if (response.statusCode != 200) {
-    return null;
-  }
-
-  return json.decode(response.body)['results'][0]['address_components'];
 }
 
 //თარიღისა და დროის ფანჯრები
