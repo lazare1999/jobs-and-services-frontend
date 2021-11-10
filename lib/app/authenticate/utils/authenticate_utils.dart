@@ -32,15 +32,12 @@ Future<String?> getJwtViaRefreshToken() async {
       },
     );
 
-    final String resString = res.data;
-
     if(res.statusCode !=200) {
       return null;
     }
 
-    await updateRefreshTokenLocal(resString);
-    var body = json.decode(resString);
-    return body["jwt"];
+    await updateRefreshTokenLocal(res.data);
+    return res.data["jwt"];
   } catch (e) {
     return null;
   }
