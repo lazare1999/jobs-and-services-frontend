@@ -1,4 +1,4 @@
-import 'package:jobs_and_services/app/sqflite/models/profile_model.dart';
+import 'package:jobs_and_services/app/commons/models/profile_model.dart';
 import 'package:jobs_and_services/app/sqflite/repositories/repository.dart';
 
 class ProfileService {

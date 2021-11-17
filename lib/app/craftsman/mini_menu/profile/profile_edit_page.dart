@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jobs_and_services/app/authenticate/utils/authenticate_utils.dart';
 import 'package:jobs_and_services/app/commons/animation_controller_class.dart';
-import 'package:jobs_and_services/app/sqflite/models/profile_model.dart';
+import 'package:jobs_and_services/app/commons/models/profile_model.dart';
 import 'package:jobs_and_services/app/sqflite/services/profile_service.dart';
 import 'package:jobs_and_services/custom/custom_icons_icons.dart';
 import 'package:jobs_and_services/globals.dart';

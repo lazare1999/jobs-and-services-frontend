@@ -1,8 +1,7 @@
 library my_prj.authenticate_utils;
 
-import 'dart:convert';
-
 import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -276,7 +275,10 @@ Future<void> logout(context) async {
 
     await _restart(context);
   } catch (e) {
-    showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
+    if (e is DioError && e.response?.statusCode == 403) {
+      await _restart(context);
+    }
+    return;
   }
 }
 
@@ -376,7 +378,7 @@ Future<void> reloadApp(context) async {
                               );
                             },
                             borderRadius: 18.0,
-                            color: Colors.deepOrange,
+                            color: Colors.blueGrey,
                             elevation: 0,
                           ),
                         )

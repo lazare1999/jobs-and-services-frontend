@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jobs_and_services/app/preview/base_page.dart';
 import 'app/craftsman/craftsman_main_page.dart';
 import 'app/main_menu.dart';
+import 'app/search_craftsman/search_craftsman_main_page.dart';
 import 'my_route_observer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
+
   runApp(
       const RestartWidget(
           child: MyApp()
@@ -101,6 +105,9 @@ class _MyAppState extends State<MyApp> {
         },
         '/craftsman': (context) {
           return const CraftsmanMainPage();
+        },
+        '/search_craftsman': (context) {
+          return const SearchCraftsmanMainPage();
         }
       },
     );

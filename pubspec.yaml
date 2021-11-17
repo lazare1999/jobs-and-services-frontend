@@ -55,6 +55,7 @@ dependencies:
   country_code_picker: ^2.0.2
   geolocator: ^7.7.0
   location: ^4.3.0
+  flutter_switch: ^0.3.2
 
   flutter_launcher_icons: ^0.9.0
   # The following adds the Cupertino Icons font to your application.
@@ -100,6 +101,7 @@ flutter:
    - assets/images/youtube_text.png
    - assets/md/terms_and_conditions_ge.md
    - assets/md/terms_and_conditions_en.md
+   - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

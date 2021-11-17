@@ -168,9 +168,8 @@ class _MainMenu extends State<MainMenu> {
                     blurRadius: 0,
                   ),
                 ],
-                onTap: () async {
-                // TODO : მოძებნე მოხელე
-
+                onTap: () {
+                  Navigator.of(context).pushNamed('/search_craftsman');
                 }),
             CircularMenuItem(
                 icon: Icons.facebook_outlined,
