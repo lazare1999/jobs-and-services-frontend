@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,10 @@ import 'package:jobs_and_services/app/commons/star_rating.dart';
 import 'package:jobs_and_services/globals.dart';
 import 'package:jobs_and_services/utils/lazo_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../main_menu.dart';
+import 'model/paid_users_model.dart';
 
 class SearchCraftsmanMainPage extends StatefulWidget {
   const SearchCraftsmanMainPage({Key? key}) : super(key: key);
@@ -26,6 +29,8 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
 
   static const _pageSize = 10;
   bool _searchOnlyFavorite = false;
+  final HashMap<int, bool?> _wantToMakePaidMap = HashMap<int, bool?>();
+  final List<PaidUsersModel> _users = List<PaidUsersModel>.empty(growable: true);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   final PagingController<int, UsersInfoModel> _pagingController = PagingController(firstPageKey: 0);
@@ -57,6 +62,19 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
 
       if(res.statusCode ==200) {
         List<UsersInfoModel> newItems = List<UsersInfoModel>.from(res.data.map((i) => UsersInfoModel.fromJson(i)));
+
+
+        int j=0;
+        if (_wantToMakePaidMap.isNotEmpty) {
+          j = _wantToMakePaidMap.length;
+        }
+        for(int i=0; i < newItems.length; i++) {
+          _wantToMakePaidMap[j] = false;
+          var _model = PaidUsersModel();
+          _model.updatePaidUsersModel(newItems[i], i);
+          _users.add(_model);
+          j++;
+        }
 
         final isLastPage = newItems.length < _pageSize;
         if (isLastPage) {
@@ -134,6 +152,20 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                 ListTile(
                   title: Row(
                     children: const <Widget>[
+                      Icon(Icons.add, color: Colors.blueGrey),
+                      Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            //TODO : თარგმნე
+                            child: Text("გადაიხადე რომ დაუკავშირდე მოხელეს"),
+                          )
+                      ),
+                    ],
+                  ),
+                ),
+                ListTile(
+                  title: Row(
+                    children: const <Widget>[
                       Icon(Icons.search, color: Colors.blueGrey),
                       Flexible(
                           child: Padding(
@@ -154,6 +186,20 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                             padding: EdgeInsets.only(left: 8.0),
                             //TODO : თარგმნე
                             child: Text("დაურეკე მოხელეს"),
+                          )
+                      ),
+                    ],
+                  ),
+                ),
+                ListTile(
+                  title: Row(
+                    children: const <Widget>[
+                      Icon(Icons.email, color: Colors.redAccent),
+                      Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            //TODO : თარგმნე
+                            child: Text("მიწერე მოხელეს"),
                           )
                       ),
                     ],
@@ -194,6 +240,8 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
       body: RefreshIndicator(
         onRefresh: () => Future.sync(() => {
           _pagingController.refresh(),
+          _wantToMakePaidMap.clear(),
+          _users.clear(),
         }),
         child: PagedListView<int, UsersInfoModel>.separated(
           pagingController: _pagingController,
@@ -212,13 +260,115 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          Expanded(
+                          !item.isPaid! ? Flexible(
+                            child: CheckboxListTile(
+                              controlAffinity: ListTileControlAffinity.leading,
+                              value: _wantToMakePaidMap[index],
+                              onChanged: (newValue) {
+                                setState(() {
+                                  _wantToMakePaidMap.update(index, (value) => newValue);
+                                });
+                              },
+                            )
+                          ): Visibility(
+                            visible: false, child: Container(),
+                          ),
+                          item.isPaid! ? Expanded(
                             child: ListTile(
                               title: const Icon(Icons.phone, color: Colors.green),
                               onTap: () {
-                                launch('tel:' + item.username!);
+                                //TODO : შეამოწმე არის თუ არა გადახდილი მოცემული დღის მდგომარეობით (ჯერ აქ და მერე სერვერზე)
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        item.firstName!+" "+item.lastName!,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      content: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: TextFormField(
+                                              readOnly: true,
+                                              initialValue: item.username,
+                                              textAlign: TextAlign.center,
+                                              decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: MaterialButton(
+                                              child: const Icon(Icons.phone, color: Colors.green,),
+                                              onPressed: () {
+                                                launch('tel:' + item.username!);
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(18.0),
+                                          side: const BorderSide(color: Colors.black)
+                                      ),
+                                    );
+                                  },
+                                );
+
+
                               },
                             ),
+                          ): Visibility(
+                            visible: false, child: Container(),
+                          ),
+                          item.isPaid! ? Expanded(
+                            child: ListTile(
+                              title: const Icon(Icons.email, color: Colors.redAccent),
+                              onTap: () {
+                                //TODO : შეამოწმე არის თუ არა გადახდილი მოცემული დღის მდგომარეობით (ჯერ აქ და მერე სერვერზე)
+
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        item.firstName!+" "+item.lastName!,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      content: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: TextFormField(
+                                              readOnly: true,
+                                              initialValue: item.email,
+                                              textAlign: TextAlign.center,
+                                              decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: MaterialButton(
+                                              child: const Icon(Icons.email, color: Colors.redAccent,),
+                                              onPressed: () {
+                                                launch('mailto:' + item.email!);
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(18.0),
+                                          side: const BorderSide(color: Colors.black)
+                                      ),
+                                    );
+                                  },
+                                );
+
+
+                              },
+                            ),
+                          ): Visibility(
+                            visible: false, child: Container(),
                           ),
                           Expanded(
                             flex: 3,
@@ -474,33 +624,170 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
           separatorBuilder: (context, index) => const Divider(),
         ),
       ),
-      floatingActionButtonLocation:
-      FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(1),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            FloatingActionButton(
-              heroTag: "btn1",
-              child: Icon(_searchOnlyFavorite ? Icons.star : Icons.star_border_outlined),
-              onPressed: () {
-                setState(() {
-                  _searchOnlyFavorite = !_searchOnlyFavorite;
-                  _pagingController.refresh();
-                });
-              },
+            const SizedBox(
+              width: 30.0,
             ),
-            FloatingActionButton(
-              heroTag: "btn2",
-              child: const Icon(Icons.search),
-              onPressed: () {
-                _pagingController.refresh();
-              },
+            Expanded(
+              child: FloatingActionButton(
+                heroTag: "btn1",
+                child: Icon(_searchOnlyFavorite ? Icons.star : Icons.star_border_outlined),
+                onPressed: () {
+                  setState(() {
+                    _searchOnlyFavorite = !_searchOnlyFavorite;
+                    _pagingController.refresh();
+                  });
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 5.0,
+            ),
+            Expanded(
+              child: FloatingActionButton(
+                heroTag: "btn2",
+                child: const Icon(Icons.add),
+                onPressed: () async {
+                  List<int?> _checkedUsers = List<int?>.empty(growable: true);
+                  _wantToMakePaidMap.forEach((key, value) {
+                    if (value!) {
+                      _checkedUsers.add(_users.where((c) => c.id == key).first.userId);
+                    }
+                  });
+
+                  var _continue = true;
+                  var _tariff = 0.0;
+                  var _currency = "GEL";
+
+                  if (_checkedUsers.isEmpty) {
+                    //TODO : თარგმნე
+                    showAlertDialog(context, "მონიშნეთ მომხმარებლები", "ყურადღება");
+                    return;
+                  }
+
+                  await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => AlertDialog(
+                        title: const Text(' '),
+                        content: const Text("გსურთ ტარიფის გაგება?"),
+                        actions: <Widget>[
+                          OutlinedButton(
+                            child: Text(AppLocalizations.of(context)!.yes),
+                            onPressed: () async {
+
+                              try {
+
+                                final res = await jobsAndServicesClient.post(
+                                  'craftsman/get_paid_users_tariff',
+                                  queryParameters: {
+                                    "checkedUsers": _checkedUsers.toString(),
+                                  },
+                                );
+
+                                if(res.statusCode ==200) {
+                                  _tariff = res.data;
+                                  Navigator.pop(context,false);
+                                }
+
+                              } catch (e) {
+                                if (e is DioError && e.response?.statusCode == 403) {
+                                  reloadApp(context);
+                                } else {
+                                  showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
+                                }
+                                return;
+                              }
+
+                            }, //exit the app
+                          ),
+                          OutlinedButton(
+                            child: Text(AppLocalizations.of(context)!.no),
+                            onPressed: () {
+                              Navigator.pop(context,false);
+                              _continue = false;
+                            }, //
+                          )
+                        ],
+                      )
+                  );
+
+                  if(_continue) {
+                    await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(' '),
+                          //TODO : თარგმნე
+                          content: Text("გადასახდელია " + _tariff.toString() + " " + _currency + "\n" + "გსურთ გადახდა?"),
+                          actions: <Widget>[
+                            OutlinedButton(
+                              child: Text(AppLocalizations.of(context)!.yes),
+                              onPressed: () async {
+
+                                try {
+                                  //TODO : მერე ნახე თუ შეიძლება პირდაპირ გადახდის მეთოდით ჩანაცვლება მაგრამ ჩვენ ბაზებში მაინც უნდა აღირიცხოს რომ გადახდა მოხდა
+                                  final res = await jobsAndServicesClient.post(
+                                    'craftsman/pay_for_users_contact_info',
+                                    queryParameters: {
+                                      "checkedUsers": _checkedUsers.toString(),
+                                    },
+                                  );
+
+                                  Navigator.pop(context,false);
+
+                                  if (res.data) {
+                                    _pagingController.refresh();
+                                  } else {
+                                    //TODO : თარგმნე
+                                    showAlertDialog(context, "მონიშნეთ მომხმარებლები", "ყურადღება");
+                                  }
+
+                                  _users.clear();
+                                  _wantToMakePaidMap.clear();
+
+                                } catch (e) {
+                                  if (e is DioError && e.response?.statusCode == 403) {
+                                    reloadApp(context);
+                                  } else {
+                                    showAlertDialog(context, e.toString(), AppLocalizations.of(context)!.the_connection_to_the_server_was_lost);
+                                  }
+                                  return;
+                                }
+
+                              },
+                            ),
+                            OutlinedButton(
+                              child: Text(AppLocalizations.of(context)!.no),
+                              onPressed: () {
+                                Navigator.pop(context,false);
+                              }, //
+                            )
+                          ],
+                        )
+                    );
+                  }
+                  
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 5.0,
+            ),
+            Expanded(
+              child:  FloatingActionButton(
+                heroTag: "btn3",
+                child: const Icon(Icons.search),
+                onPressed: () {
+                  _pagingController.refresh();
+                },
+              ),
             ),
           ],
         ),
-      ),
+      )
     );
   }
 

@@ -6,8 +6,10 @@ class UsersInfoModel {
     this.lastName,
     this.rating,
     this.nickname,
+    this.email,
     this.mainNickname,
     this.isFav,
+    this.isPaid,
   });
 
   factory UsersInfoModel.fromJson(Map<String, dynamic> json) =>
@@ -18,8 +20,10 @@ class UsersInfoModel {
         lastName: json['lastName'],
         rating: json['rating'],
         nickname: json['nickname'],
+        email: json['email'],
         mainNickname: json['mainNickname'],
         isFav: json['isFav'],
+        isPaid: json['isPaid'],
       );
 
   final int? userId;
@@ -28,7 +32,9 @@ class UsersInfoModel {
   final String? lastName;
   final double? rating;
   final String? nickname;
+  final String? email;
   final String? mainNickname;
   final bool? isFav;
+  final bool? isPaid;
 
 }

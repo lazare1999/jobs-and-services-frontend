@@ -94,7 +94,14 @@ Future<String?> getAccessToken() async {
 //ავტორიზაცია
 Future<bool> authenticate(context, String? countryPhoneCode, String? username, String? password, String? tempPassword) async {
 
-  if (username ==null || password ==null || tempPassword ==null || password.isEmpty || tempPassword.isEmpty) {
+  if (username ==null ||
+      countryPhoneCode ==null ||
+      password ==null ||
+      tempPassword ==null ||
+      username.isEmpty ||
+      countryPhoneCode.isEmpty ||
+      password.isEmpty ||
+      tempPassword.isEmpty) {
     return false;
   }
 
@@ -112,6 +119,7 @@ Future<bool> authenticate(context, String? countryPhoneCode, String? username, S
     if(res.statusCode ==200) {
       final SharedPreferences _prefs = await SharedPreferences.getInstance();
       _prefs.setString("phone", username);
+      _prefs.setString("countryCode", countryPhoneCode);
       await updateRefreshTokenLocal(res.data);
       return true;
     }
@@ -317,6 +325,7 @@ Future<void> reloadApp(context) async {
                               filled: true,
                               labelText: AppLocalizations.of(context)!.password,
                             ),
+                            obscureText: true,
                             enableSuggestions: false,
                             autocorrect: false,
                             onChanged: (value) {
