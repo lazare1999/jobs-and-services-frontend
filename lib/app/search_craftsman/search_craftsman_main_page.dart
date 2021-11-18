@@ -13,7 +13,6 @@ import 'package:jobs_and_services/app/commons/star_rating.dart';
 import 'package:jobs_and_services/globals.dart';
 import 'package:jobs_and_services/utils/lazo_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../main_menu.dart';
 import 'model/paid_users_model.dart';
