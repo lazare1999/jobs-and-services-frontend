@@ -203,12 +203,26 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                 ListTile(
                   title: Row(
                     children: const <Widget>[
+                      Icon(Icons.star_border_outlined, color: Colors.blueGrey),
+                      Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            //TODO : თარგმნე
+                            child: Text("არაფავორიტებში ძებნა"),
+                          )
+                      ),
+                    ],
+                  ),
+                ),
+                ListTile(
+                  title: Row(
+                    children: const <Widget>[
                       Icon(Icons.star, color: Colors.blueGrey),
                       Flexible(
                           child: Padding(
                             padding: EdgeInsets.only(left: 8.0),
                             //TODO : თარგმნე
-                            child: Text("მხოლოდ ფავორიტებში ძებნა"),
+                            child: Text("ფავორიტებში ძებნა"),
                           )
                       ),
                     ],
@@ -273,7 +287,7 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                 ListTile(
                   title: Row(
                     children: const <Widget>[
-                      Icon(Icons.star, color: Colors.green),
+                      Icon(Icons.star, color: Color.fromRGBO(218,165,32, 1.0)),
                       Flexible(
                           child: Padding(
                             padding: EdgeInsets.only(left: 8.0),
@@ -287,7 +301,7 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                 ListTile(
                   title: Row(
                     children: const <Widget>[
-                      Icon(Icons.star_border_outlined, color: Colors.red),
+                      Icon(Icons.star_border_outlined, color: Color.fromRGBO(218,165,32, 1.0)),
                       Flexible(
                           child: Padding(
                             padding: EdgeInsets.only(left: 8.0),
@@ -314,7 +328,6 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
             itemBuilder: (context, item, index) {
 
               var _firstLastName = (item.firstName ?? "") + " " + (item.lastName ==null ? "" : item.lastName!) + " " + (item.mainNickname ==null ? "" : item.mainNickname!);
-              _firstLastName = item.username! + "  " + _firstLastName;
               if (item.nickname !=null && item.nickname!.isNotEmpty) {
                 _firstLastName = item.nickname!;
               }
@@ -344,6 +357,35 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                               onTap: () async {
 
                                 if(await _checkIfPaidDateNotExpired(item.userId!)) {
+
+                                  var _username = "";
+
+                                  try {
+
+                                    final res = await jobsAndServicesClient.post(
+                                      'craftsman/get_craftsman_phone_by_user_id',
+                                      queryParameters: {
+                                        "paidUserId": item.userId.toString(),
+                                      },
+                                    );
+                                    _username = res.data;
+
+                                  } catch (e) {
+                                    if (e is DioError && e.response?.statusCode == 403) {
+                                      reloadApp(context);
+                                    } else if (e is DioError && e.response?.statusCode == 400) {
+                                      //TODO : თარგმნე
+                                      showAlertDialog(context, "მომხმარებელი ვერ მოიძებნა", "გაუთვალისწინებელი შეცდომა");
+                                    }
+                                    return;
+                                  }
+
+                                  if (_username.isEmpty) {
+                                    //TODO : თარგმნე
+                                    showAlertDialog(context, "არაა გადახდილი", "ყურადღება");
+                                    return;
+                                  }
+
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -358,7 +400,7 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                                               flex: 3,
                                               child: TextFormField(
                                                 readOnly: true,
-                                                initialValue: item.username,
+                                                initialValue: _username,
                                                 textAlign: TextAlign.center,
                                                 decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
                                               ),
@@ -367,7 +409,7 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                                               child: MaterialButton(
                                                 child: const Icon(Icons.phone, color: Colors.green,),
                                                 onPressed: () {
-                                                  launch('tel:' + item.username!);
+                                                  launch('tel:' + _username);
                                                 },
                                               ),
                                             )
@@ -395,6 +437,35 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                               onTap: () async {
 
                                 if(await _checkIfPaidDateNotExpired(item.userId!)) {
+
+                                  var _email = "";
+
+                                  try {
+
+                                    final res = await jobsAndServicesClient.post(
+                                      'craftsman/get_craftsman_email_by_user_id',
+                                      queryParameters: {
+                                        "paidUserId": item.userId.toString(),
+                                      },
+                                    );
+                                    _email = res.data;
+
+                                  } catch (e) {
+                                    if (e is DioError && e.response?.statusCode == 403) {
+                                      reloadApp(context);
+                                    } else if (e is DioError && e.response?.statusCode == 400) {
+                                      //TODO : თარგმნე
+                                      showAlertDialog(context, "მომხმარებელი ვერ მოიძებნა", "გაუთვალისწინებელი შეცდომა");
+                                    }
+                                    return;
+                                  }
+
+                                  if (_email.isEmpty) {
+                                    //TODO : თარგმნე
+                                    showAlertDialog(context, "არაა გადახდილი", "ყურადღება");
+                                    return;
+                                  }
+
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -409,7 +480,7 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                                               flex: 3,
                                               child: TextFormField(
                                                 readOnly: true,
-                                                initialValue: item.email,
+                                                initialValue: _email,
                                                 textAlign: TextAlign.center,
                                                 decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
                                               ),
@@ -418,7 +489,7 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                                               child: MaterialButton(
                                                 child: const Icon(Icons.email, color: Colors.redAccent,),
                                                 onPressed: () {
-                                                  launch('mailto:' + item.email!);
+                                                  launch('mailto:' + _email);
                                                 },
                                               ),
                                             )
@@ -596,7 +667,7 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                             child: MaterialButton(
                               child: Icon(
                                   item.isFav! ? Icons.star_border_outlined : Icons.star,
-                                  color: item.isFav! ? Colors.red : Colors.green
+                                  color: const Color.fromRGBO(218,165,32, 1.0)
                               ),
                               onPressed: () async {
                                 if (item.isFav!) {

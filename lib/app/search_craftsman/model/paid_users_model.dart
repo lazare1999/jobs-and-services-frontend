@@ -2,18 +2,16 @@ class PaidUsersModel {
 
   int? id;
   int? userId;
-  String? username;
   String? firstName;
   String? lastName;
   double? rating;
   String? nickname;
-  String? email;
   String? mainNickname;
   bool? isFav;
 
   PaidUsersModel({
-    this.id, this.userId, this.username, this.firstName, this.lastName, this.rating,
-    this.nickname, this.email, this.mainNickname, this.isFav
+    this.id, this.userId, this.firstName, this.lastName, this.rating,
+    this.nickname, this.mainNickname, this.isFav
   });
 
 
@@ -26,9 +24,6 @@ class PaidUsersModel {
     if (body.userId != null) {
       userId = body.userId;
     }
-    if (body.username != null) {
-      username = body.username;
-    }
     if (body.firstName != null) {
       firstName = body.firstName;
     }
@@ -40,9 +35,6 @@ class PaidUsersModel {
     }
     if (body.nickname != null) {
       nickname = body.nickname;
-    }
-    if (body.email != null) {
-      email = body.email;
     }
     if (body.mainNickname != null) {
       mainNickname = body.mainNickname;
