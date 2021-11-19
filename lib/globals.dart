@@ -3,3 +3,4 @@ import 'package:jobs_and_services/app/authenticate/client/jobs_and_services_api_
 
 var jobsAndServicesClient = JobsAndServicesClient().getApiClient();
 var dioDefault = Dio();
+const String commonStringForPaidUsersSharedPrefs = "paidUserId";

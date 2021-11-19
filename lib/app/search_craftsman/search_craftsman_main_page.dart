@@ -12,6 +12,7 @@ import 'package:jobs_and_services/app/commons/models/users_info_model.dart';
 import 'package:jobs_and_services/app/commons/star_rating.dart';
 import 'package:jobs_and_services/globals.dart';
 import 'package:jobs_and_services/utils/lazo_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../main_menu.dart';
@@ -96,11 +97,76 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
 
   }
 
-  Future<bool> _onBackPressed(){
+  Future<bool> _onBackPressed() {
     return Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const MainMenu()),
     ).then((x) => x ?? false);
+  }
+
+  void _removeFromPaidUsersRequest(userId) async {
+    try {
+      await jobsAndServicesClient.post(
+        'craftsman/remove_from_paid_users',
+        queryParameters: {
+          "paidUserId": userId.toString(),
+        },
+      );
+    } catch (e) {
+      if (e is DioError && e.response?.statusCode == 403) {
+        reloadApp(context);
+      }
+    }
+  }
+
+  Future<bool> _checkIfPaidDateNotExpired(int userId) async {
+
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+    var _key = commonStringForPaidUsersSharedPrefs + userId.toString();
+    var _userPaidDateExpiresIn = _prefs.getInt(_key);
+
+    if(_userPaidDateExpiresIn ==null) {
+      try {
+
+        final res = await jobsAndServicesClient.post(
+          'craftsman/check_if_paid_expired',
+          queryParameters: {
+            "paidUserId": userId.toString(),
+          },
+        );
+
+        if (res.data["isNotPaid"]) {
+          //TODO : თარგმნე
+          showAlertDialog(context, "თავიდანაა გადასახდელი", "ყურადღება");
+          _removeFromPaidUsersRequest(userId);
+          _prefs.remove(_key);
+          return false;
+
+        } else if (res.data["expiresIn"] !=null) {
+          _prefs.setInt(_key, res.data["expiresIn"]);
+        }
+        return true;
+
+      } catch (e) {
+        if (e is DioError && e.response?.statusCode == 403) {
+          reloadApp(context);
+        }
+        return false;
+      }
+
+    }
+
+    var expiresAt = DateTime.fromMillisecondsSinceEpoch(_userPaidDateExpiresIn);
+    if (DateTime.now().isAfter(expiresAt)) {
+
+      _prefs.remove(_key);
+
+      _removeFromPaidUsersRequest(userId);
+
+      return false;
+    }
+    return true;
+
   }
 
   @override
@@ -275,45 +341,48 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                           item.isPaid! ? Expanded(
                             child: ListTile(
                               title: const Icon(Icons.phone, color: Colors.green),
-                              onTap: () {
-                                //TODO : შეამოწმე არის თუ არა გადახდილი მოცემული დღის მდგომარეობით (ჯერ აქ და მერე სერვერზე)
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        item.firstName!+" "+item.lastName!,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      content: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: TextFormField(
-                                              readOnly: true,
-                                              initialValue: item.username,
-                                              textAlign: TextAlign.center,
-                                              decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: MaterialButton(
-                                              child: const Icon(Icons.phone, color: Colors.green,),
-                                              onPressed: () {
-                                                launch('tel:' + item.username!);
-                                              },
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(18.0),
-                                          side: const BorderSide(color: Colors.black)
-                                      ),
-                                    );
-                                  },
-                                );
+                              onTap: () async {
 
+                                if(await _checkIfPaidDateNotExpired(item.userId!)) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text(
+                                          item.firstName!+" "+item.lastName!,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        content: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: TextFormField(
+                                                readOnly: true,
+                                                initialValue: item.username,
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: MaterialButton(
+                                                child: const Icon(Icons.phone, color: Colors.green,),
+                                                onPressed: () {
+                                                  launch('tel:' + item.username!);
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(18.0),
+                                            side: const BorderSide(color: Colors.black)
+                                        ),
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  _pagingController.refresh();
+                                }
 
                               },
                             ),
@@ -323,46 +392,48 @@ class _SearchCraftsmanMainPage extends State<SearchCraftsmanMainPage> {
                           item.isPaid! ? Expanded(
                             child: ListTile(
                               title: const Icon(Icons.email, color: Colors.redAccent),
-                              onTap: () {
-                                //TODO : შეამოწმე არის თუ არა გადახდილი მოცემული დღის მდგომარეობით (ჯერ აქ და მერე სერვერზე)
+                              onTap: () async {
 
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        item.firstName!+" "+item.lastName!,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      content: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: TextFormField(
-                                              readOnly: true,
-                                              initialValue: item.email,
-                                              textAlign: TextAlign.center,
-                                              decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
+                                if(await _checkIfPaidDateNotExpired(item.userId!)) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text(
+                                          item.firstName!+" "+item.lastName!,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        content: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: TextFormField(
+                                                readOnly: true,
+                                                initialValue: item.email,
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(hintText: AppLocalizations.of(context)!.email),
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: MaterialButton(
-                                              child: const Icon(Icons.email, color: Colors.redAccent,),
-                                              onPressed: () {
-                                                launch('mailto:' + item.email!);
-                                              },
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(18.0),
-                                          side: const BorderSide(color: Colors.black)
-                                      ),
-                                    );
-                                  },
-                                );
-
+                                            Expanded(
+                                              child: MaterialButton(
+                                                child: const Icon(Icons.email, color: Colors.redAccent,),
+                                                onPressed: () {
+                                                  launch('mailto:' + item.email!);
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(18.0),
+                                            side: const BorderSide(color: Colors.black)
+                                        ),
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  _pagingController.refresh();
+                                }
 
                               },
                             ),
